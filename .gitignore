@@ -29,5 +29,5 @@ doc-dev
 .vscode/*
 
 data
-
 **/migrations/versions/*
+!**/migrations/versions/.gitkeep
