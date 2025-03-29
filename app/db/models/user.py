@@ -5,11 +5,10 @@ from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from typing import List
 
-from communities import Communities
-from user_communities import UserCommunity
-from post import Post
 
-from base import Base
+
+
+from app.db.base import Base
 
 
 class User(Base):

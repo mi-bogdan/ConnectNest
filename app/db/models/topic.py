@@ -6,10 +6,10 @@ from sqlalchemy.ext.associationproxy import association_proxy
 import uuid
 from typing import List
 
-from topic_post import TopicPost
-from post import Post
 
-from base import Base
+
+
+from app.db.base import Base
 
 
 class Topic(Base):

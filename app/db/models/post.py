@@ -2,15 +2,15 @@ from datetime import datetime
 from typing import Mapping
 from sqlalchemy import String, DateTime, func, ForeignKey
 from sqlalchemy.ext.associationproxy import association_proxy
-from base import Base
+from app.db.base import Base
 import uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import UUID
-from topic_post import TopicPost
-from topic import Topic
+
+
 from typing import List
-from user import User
-from communities import Communities
+
+
 
 
 class Post(Base):

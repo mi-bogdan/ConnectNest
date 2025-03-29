@@ -1,14 +1,12 @@
-from base import Base
+from app.db.base import Base
 
 from datetime import datetime
 
 from sqlalchemy import Boolean, String, DateTime, func, Text, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import UUID
-from user import User
 from typing import List
-from user_communities import UserCommunity
-from post import Post
+
 
 import uuid
 

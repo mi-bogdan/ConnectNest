@@ -1,12 +1,11 @@
-from base import Base
+from app.db.base import Base
 
 from datetime import datetime
 
 from sqlalchemy import Boolean, String, DateTime, func, Text, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import UUID
-from user import User
-from communities import Communities
+
 
 import uuid
 

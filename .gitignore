@@ -3,20 +3,11 @@
 *.egg-info/
 .installed.cfg
 *.egg
-**/migrations/**
-!**/migrations
-!**/migrations/__init__.py
-
 dist
-db.sqlite3
 
 poetry.lock
 
 venv
-
-.env
-.env.dev
-.env.prod
 
 __pycache__/
 */__pycache__/
@@ -24,9 +15,7 @@ __pycache__/
 .pyc
 *.pyc
 
-!*media/.gitkeep
-!*media/default
-media/*
+
 
 log/debug.log
 
@@ -40,3 +29,5 @@ doc-dev
 .vscode/*
 
 data
+
+**/migrations/versions/*

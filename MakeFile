@@ -56,4 +56,19 @@ clean:
 
 
 
+alembic_init:
+	$(DOCKER_COMPOSE) exec web alembic init -t async /code/app/db/migrations
+
+alembic_migrations:
+	$(DOCKER_COMPOSE) exec web alembic revision --autogenerate -m "init"
+
+alembic_head:
+	$(DOCKER_COMPOSE) exec web alembic upgrade head
+
+alembic_base:
+	$(DOCKER_COMPOSE) exec web alembic downgrade base
+
+
+
+
 	
