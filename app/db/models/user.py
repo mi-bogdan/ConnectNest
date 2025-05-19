@@ -5,9 +5,6 @@ from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from typing import List
 
-
-
-
 from app.db.base import Base
 
 
@@ -25,7 +22,8 @@ class User(Base):
     username: Mapped[str] = mapped_column(
         String(30),
         nullable=False,
-        comment="Логин пользователя"
+        comment="Логин пользователя",
+        unique=True
     )
     first_name: Mapped[str] = mapped_column(
         String(30),
@@ -83,7 +81,7 @@ class User(Base):
     # Список сообществ, членом которых является пользователь
     communities: Mapped[List['Communities']] = relationship(
         'Communities',
-        secondary='memberships',
+        secondary='user_community',
         back_populates='members'
     )
 

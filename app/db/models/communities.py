@@ -58,7 +58,7 @@ class Communities(Base):
     # List of members (users)
     members: Mapped[List['User']] = relationship(
         'User',
-        secondary='memberships',
+        secondary='user_community',
         back_populates='communities'
     )
 

@@ -71,4 +71,15 @@ alembic_base:
 
 
 
+rsa_private_key:
+	$(DOCKER_COMPOSE) exec web openssl genrsa -out app/config/certs/jwt-private.pem 2048
+
+rsa_public_key:
+	$(DOCKER_COMPOSE) exec web openssl rsa -in app/config/certs/jwt-private.pem -outform PEM -pubout -out app/config/certs/jwt-public.pem
+
+
+
+
+
+
 	

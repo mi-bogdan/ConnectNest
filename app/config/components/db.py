@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from config.constants import ENV_FILE_PATH
+from app.config.constants import ENV_FILE_PATH
 
 
 class DatabaseConfig(BaseSettings):

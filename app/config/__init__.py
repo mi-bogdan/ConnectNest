@@ -1,10 +1,11 @@
-from config.components import ComponentsConfig
-from config.envs.production import ProductionConfig
-from config.envs.development import DevelopmentConfig
+from app.config.components import ComponentsConfig
+from app.config.envs.production import ProductionConfig
+from app.config.envs.development import DevelopmentConfig
 
 
 class DevelopmentSettings(ComponentsConfig, DevelopmentConfig):
     pass
+
 
 class ProductionSettings(ComponentsConfig, ProductionConfig):
     pass

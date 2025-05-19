@@ -1,12 +1,5 @@
 .DS_Store
 .git
-*.egg-info/
-.installed.cfg
-*.egg
-dist
-
-poetry.lock
-
 venv
 
 __pycache__/
@@ -14,16 +7,6 @@ __pycache__/
 *.py[cod]
 .pyc
 *.pyc
-
-
-
-log/debug.log
-
-build
-doc
-home.rst
-make.bat
-
 
 doc-dev
 .vscode/*
