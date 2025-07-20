@@ -1,5 +1,8 @@
 from pydantic_settings import BaseSettings
 from app.config.constants import ENV_FILE_PATH
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 class BaseConfig(BaseSettings):

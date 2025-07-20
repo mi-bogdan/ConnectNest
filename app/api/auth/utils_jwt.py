@@ -2,9 +2,10 @@ from datetime import datetime, timedelta, timezone
 import jwt
 from pathlib import Path
 from app.config import settings
+from app.utils.mixins import LoggerMixin
 
 
-class JWTManager:
+class JWTManager(LoggerMixin):
     def __init__(
             self,
             private_key_path: Path,
@@ -30,6 +31,7 @@ class JWTManager:
         :param payload: Данные для кодирования.
         :return: Закодированный JWT-токен.
         """
+        self.logger.debug("Кодирование JWT токена")
         now = datetime.now(timezone.utc)
         if expire_timedelta:
             expire = now + expire_timedelta
@@ -51,6 +53,8 @@ class JWTManager:
         :param token: JWT-токен для декодирования.
         :return: Декодированные данные.
         """
+        self.logger.debug("Декодирование JWT токена")
+
         if isinstance(token, str):
             token = token.encode("utf-8")
 

@@ -9,7 +9,6 @@ from sqlalchemy.dialects.postgresql import UUID
 
 import uuid
 
-
 class UserCommunity(Base):
     """Таблица пользователей которые подписанные на сообщества"""
     

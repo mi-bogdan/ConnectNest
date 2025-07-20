@@ -26,3 +26,12 @@ class NotFoundException(ApplicationException):
 class TokenValidationsException(ApplicationException):
     """Исключение при проблемах с валидацией токена"""
     pass
+
+
+class InvalidImageExtension(ApplicationException):
+    """Исключение, вызываемое при недопустимом расширении изображения"""
+    pass
+
+class FileSaveError(ApplicationException):
+    """Исключение, вызывается при ошибке сохранении файла"""
+    pass

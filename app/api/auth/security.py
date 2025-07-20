@@ -1,18 +1,91 @@
 import bcrypt
+import logging
+import uuid
+
 
 def get_password_hashing(password: str) -> str:
-    """Хэширование пароля"""
-    salt = bcrypt.gensalt()
-    password_hashing = bcrypt.hashpw(
-        password=password.encode("utf-8"),
-        salt=salt
-    )
-    return password_hashing.decode("utf-8")
+    """
+    Хэширование пароля с безопасным логированием
+
+    params password (str): Пароль для хэширования
+    return: Захэшированный пароль
+    """
+    logger = logging.getLogger(__name__)
+    operation_id = str(uuid.uuid4())
+    try:
+        logger.info(
+            "Начало хэширования пароля",
+            extra={
+                "operation_id": operation_id,
+                "len_password": len(password)
+            }
+        )
+        salt = bcrypt.gensalt()
+        password_hashing = bcrypt.hashpw(
+            password=password.encode("utf-8"),
+            salt=salt
+        )
+        logger.info(
+            "Пароль успешно захэширован",
+            extra={
+                "opration_id": operation_id,
+                "hash_length": len(password_hashing)
+            }
+        )
+        return password_hashing.decode("utf-8")
+    except Exception as e:
+        logger.error(
+            "Ошибка хэширования пароля",
+            extra={
+                "opertion_id": operation_id,
+                "error": str(e)
+            }
+        )
+        raise
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Проверяет соответствие введенного пароля и хешированного."""
-    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+    """
+    Проверяет соответствие введенного пароля и хешированного.
+
+    param plain_password: Введенный пароль
+    param hashed_password: Захэшированный пароль
+
+    return: Результат проверки пароля
+    """
+    # Генерируем уникальный идентификатор для трекинга операции
+    operation_id = str(uuid.uuid4())
+    logger = logging.getLogger(__name__)
+
+    try:
+        logger.info(
+            "Начало проверки пароля",
+            extra={
+                "operation_id": operation_id,
+                "password_length": len(plain_password)
+            }
+        )
+        result = bcrypt.checkpw(plain_password.encode(
+            'utf-8'), hashed_password.encode('utf-8'))
+        # Логируем результат без раскрытия деталей
+        logger.info(
+            "Проверка пароля завершена",
+            extra={
+                "operation_id": operation_id,
+                "password_match": result
+            }
+        )
+        return result
+    except Exception as e:
+        logger.error(
+            "Ошибка проверки пароля",
+            extra={
+                "operation_id": operation_id,
+                "error": str(e)
+            },
+            exc_info=True
+        )
+        raise
 
 
 class PasswordHashing:
@@ -50,8 +123,8 @@ class PasswordHashing:
 
             if 4 <= rounds <= 31:
                 raise ValueError("Количество раундов должно быть между 4 и 31")
+
             
-            # Может добавить класс метод реализации проверку сложности пароля is_password_strong
 
             salt = bcrypt.gensalt(rounds=rounds)
             password_hashing = bcrypt.hashpw(
@@ -90,7 +163,7 @@ class PasswordHashing:
                 hashed_password.encode(encoding)
             )
         except Exception as e:
-            #Добавить логирование (f"Ошибка проверки пароля: {e}")
+            # Добавить логирование (f"Ошибка проверки пароля: {e}")
             return False
 
     @staticmethod
@@ -112,5 +185,5 @@ class PasswordHashing:
             any(c.isdigit() for c in password),  # Цифры
             any(not c.isalnum() for c in password)  # Спецсимволы
         ]
-        
+
         return all(checks)

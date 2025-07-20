@@ -14,7 +14,7 @@ class ProductionSettings(ComponentsConfig, ProductionConfig):
 def get_settings() -> DevelopmentSettings | ProductionSettings:
 
     env = ComponentsConfig().env
-    print(env)
+    
 
     if env == "development":
         return DevelopmentSettings()

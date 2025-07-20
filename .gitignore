@@ -7,6 +7,8 @@ __pycache__/
 *.py[cod]
 .pyc
 *.pyc
+app/logs/*
+app/media/*
 
 doc-dev
 .vscode/*
@@ -14,3 +16,5 @@ doc-dev
 data
 **/migrations/versions/*
 !**/migrations/versions/.gitkeep
+!app/logs/.gitkeep
+!app/media/.gitkeep

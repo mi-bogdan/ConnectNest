@@ -46,6 +46,8 @@ class Communities(Base):
         comment="ID администратора сообщества"
     )
 
+    
+
     # Определяем связь с моделью User
     admin: Mapped['User'] = relationship(
         'User',

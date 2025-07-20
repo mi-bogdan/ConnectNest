@@ -11,6 +11,8 @@ from app.db.db_exception_handler import get_db_exception_handler
 from app.db.session import get_db
 from app.exceptions import NotFoundException, TokenValidationsException
 from app.config import settings
+from app.utils.mixins import LoggerMixin
+
 
 from .user_dal import UserDataAccessLayer
 from .schemas import RegisterUsers
@@ -30,13 +32,14 @@ http_bearer = HTTPBearer(auto_error=False)
 oauth2_schema = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
-class UserService:
+class UserService(LoggerMixin):
     def __init__(self, db_session: Annotated[AsyncSession, Depends(get_db)]) -> None:
         self.db_session = db_session
         self.user_dal = UserDataAccessLayer(db_session)
         self.db_exceptio_handler = get_db_exception_handler()
 
     async def create_user(self, user_register: RegisterUsers) -> User | None:
+        self.logger.info("Создание пользователя")
         try:
             hashing_password = get_password_hashing(
                 password=user_register.password)
@@ -46,8 +49,10 @@ class UserService:
                 password=hashing_password
             )
             await self.db_session.commit()
+            self.logger.info(f"Пользователь: {new_user.username} создан")
             return new_user
         except IntegrityError as e:
+            self.logger.error(f"Ошибка создания: {e}", exc_info=True)
             await self.db_session.rollback()
             self.db_exceptio_handler.handle_exception(e)
 
@@ -57,7 +62,7 @@ class UserService:
         return del_user
 
 
-class AuthService:
+class AuthService(LoggerMixin):
 
     def __init__(
         self,
@@ -69,38 +74,52 @@ class AuthService:
         self.jwt_manager = jwt_manager
 
     async def authenticate_user(self, username: str, password: str):
+        self.logger.info("аунтентификация пользователя", extra={
+                         "username": username, "len_password": len(password)})
         user = await self.user_dal.get_user_by_username(username)
         if user and verify_password(password, user.password):
+            self.logger.info("Успешная аутентификация", extra={
+                             "username": username, "len_password": len(password)})
             return user
+        self.logger.warning("Неверный пароль для пользователя")
         return None
 
     def validations_token_type(self, payload, token_type):
+        self.logger.debug(f"Проверка типа токена: {token_type}")
         current_token_type = payload.get(TOKEN_TYPE_FIELD)
         if current_token_type == token_type:
             return True
-        raise TokenValidationsException(
-            f"Invalid token type {current_token_type!r} expected {token_type!r}")
+        error_massage = f"Invalid token type {current_token_type!r} expected {token_type!r}"
+        self.logger.warning(error_massage)
+        raise TokenValidationsException(error_massage)
 
     async def get_user_by_token_sub(self, payload: dict):
+        self.logger.debug("Получение пользователя по токену!")
         id = payload.get("sub")
         if not id:
+            self.logger.error("Отсутствует индентификатор пользователя: ID")
             raise TokenValidationsException(
                 "Отсутствует идентификатор пользователя")
         user = await self.user_dal.get_user_by_id(id)
         if not user:
+            self.logger.warning(f"Пользователь не найден для ID: {id}")
             raise NotFoundException("Такого пользователя не существует!")
         return {"user": user, "payload": payload}
 
     async def validate_token(self, token: str, token_type: str):
+        self.logger.info(f"Валидация токена типа: {token_type}")
         try:
             payload = self.jwt_manager.decode_jwt(token=token)
             self.validations_token_type(payload, token_type)
             return await self.get_user_by_token_sub(payload=payload)
         except ExpiredSignatureError:
+            self.logger.warning("Срок действия токена истек")
             raise TokenValidationsException("Срок действия токена истек")
         except InvalidSignatureError:
+            self.logger.error("Некорректная подпись токена")
             raise TokenValidationsException("Некорректная подпись токена")
         except DecodeError:
+            self.logger.error("Ошибка декодирования токена")
             raise TokenValidationsException("Ошибка декодирования токена")
 
     def create_jwt(
@@ -110,11 +129,13 @@ class AuthService:
         expire_minutes: int = settings.access_token_expire_minutes,
         expire_timedelta: timedelta | None = None
     ) -> str:
+        self.logger.debug(f"Создание JWT токена типа: {token_type}")
         jwt_payload = {TOKEN_TYPE_FIELD: token_type}
         jwt_payload.update(token_data)
         return self.jwt_manager.encode_jwt(payload=jwt_payload, expire_minutes=expire_minutes, expire_timedelta=expire_timedelta)
 
     def create_access_token(self, user: User) -> str:
+        self.logger.info(f"Создание access токена для пользователя: {user.username}")
         payload_jwt = {
             "sub": str(user.id),
             "username": user.username,
@@ -127,6 +148,7 @@ class AuthService:
         return access_token
 
     def create_refresh_token(self, user: User):
+        self.logger.info(f"Создание refresh токена для пользователя: {user.username}")
         payload_jwt = {
             "sub": str(user.id),
         }
@@ -158,7 +180,6 @@ class UserGetterFromToken:
         auth_service: Annotated[AuthService, Depends(get_auth_service)]
     ):
         try:
-            
             token_data = await auth_service.validate_token(token, self.token_type)
             return token_data["user"]
         except (NotFoundException, TokenValidationsException) as e:
