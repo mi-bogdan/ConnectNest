@@ -27,6 +27,9 @@ class TokenValidationsException(ApplicationException):
     """Исключение при проблемах с валидацией токена"""
     pass
 
+class NotAuthenticatedException(ApplicationException):
+    """Исключение при Authenticated"""
+
 
 class InvalidImageExtension(ApplicationException):
     """Исключение, вызываемое при недопустимом расширении изображения"""

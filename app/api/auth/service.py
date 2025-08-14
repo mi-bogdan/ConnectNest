@@ -13,7 +13,6 @@ from app.exceptions import NotFoundException, TokenValidationsException
 from app.config import settings
 from app.utils.mixins import LoggerMixin
 
-
 from .user_dal import UserDataAccessLayer
 from .schemas import RegisterUsers
 from .security import get_password_hashing, verify_password

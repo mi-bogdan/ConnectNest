@@ -3,6 +3,7 @@ from pathlib import Path
 
 from fastapi.params import Depends
 from fastapi import UploadFile
+from typing import Optional
 
 from app.exceptions import InvalidImageExtension, FileSaveError
 from app.core.enums import MediaType
@@ -32,7 +33,7 @@ class ImageService(LoggerMixin):
         :return: Расширение файла
         :raises InvalidImageExtension: Если расширение не поддерживается
         """
-        self.logger("Проверка расширения файла")
+        self.logger.info("Проверка расширения файла")
         parts = filename.split(".")
         file_type = parts[-1].lower()
 
@@ -65,7 +66,7 @@ class ImageService(LoggerMixin):
 
         return media_type_path / unique_filename
 
-    async def save_image(self, image: UploadFile | None) -> str | None:
+    async def save_image(self, image: Optional[UploadFile] = None) -> str:
         """
         Сохранение изображения
 
@@ -75,7 +76,7 @@ class ImageService(LoggerMixin):
         self.logger.info("Сохранение изображения")
         if not image:
             self.logger.warning("Изображение небыло предоставлено")
-            return None
+            return ""
 
         try:
             # Генерация пути для файла
@@ -88,7 +89,7 @@ class ImageService(LoggerMixin):
             self.logger.info(f"Изображение сохранено {file_path}")
             return self.media_manager.get_relative_path(file_path)
         except InvalidImageExtension as e:
-            self.logger.info("Недопустимое расширение изображения")
+            self.logger.warning("Недопустимое расширение изображения")
             raise
         except Exception as e:
             self.logger.error(f"Ошибка при сохранении файла {e}")

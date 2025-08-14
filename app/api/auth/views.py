@@ -127,11 +127,6 @@ async def login_user(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     return TokenInfo(access_token=access_token, refresh_token=refresh_token)
 
 
-@router.get("/users/me/", response_model=ShowUsers)
-def auth_user_check_self_info(user: ShowUsers = Depends(get_current_users)) -> ShowUsers:
-    return user
-
-
 @router.post("/refresh/", response_model=TokenInfo, response_model_exclude_none=True)
 def auth_refresh_jwt(user: Annotated[User, Depends(get_current_users_refresh)], auth_service: Annotated[AuthService, Depends(get_auth_service)]):
     logger = logging.getLogger(__name__)
@@ -139,3 +134,8 @@ def auth_refresh_jwt(user: Annotated[User, Depends(get_current_users_refresh)], 
     access_token = auth_service.create_access_token(user)
     logger.info("Токен успешно обновлен")
     return TokenInfo(access_token=access_token)
+
+
+@router.get("/users/me/", response_model=ShowUsers)
+def auth_user_check_self_info(user: ShowUsers = Depends(get_current_users)) -> ShowUsers:
+    return user

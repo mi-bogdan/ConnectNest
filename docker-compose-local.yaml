@@ -8,6 +8,12 @@ services:
       - .env
     ports:
       - "5433:5432"
+  redis:
+    image: redis:7.2-alpine
+    env_file:
+      - .env
+    ports:
+      - "6379:6379"
   web:
     build: .
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
