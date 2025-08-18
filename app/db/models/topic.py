@@ -27,7 +27,8 @@ class Topic(Base):
     title: Mapped[str] = mapped_column(
         String(100),
         nullable=False,
-        comment="Тема"
+        comment="Тема",
+        unique=True
     )
 
     # Связь с TopicPost

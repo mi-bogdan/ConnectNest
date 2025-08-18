@@ -29,6 +29,7 @@ class TokenValidationsException(ApplicationException):
 
 class NotAuthenticatedException(ApplicationException):
     """Исключение при Authenticated"""
+    pass
 
 
 class InvalidImageExtension(ApplicationException):
@@ -37,4 +38,8 @@ class InvalidImageExtension(ApplicationException):
 
 class FileSaveError(ApplicationException):
     """Исключение, вызывается при ошибке сохранении файла"""
+    pass
+
+class PermissionsError(ApplicationException):
+    """Исключение вызывается когда недостаточно прав у пользователя"""
     pass

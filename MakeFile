@@ -60,7 +60,7 @@ alembic_init:
 	$(DOCKER_COMPOSE) exec web alembic init -t async /code/app/db/migrations
 
 alembic_migrations:
-	$(DOCKER_COMPOSE) exec web alembic revision --autogenerate -m "init"
+	$(DOCKER_COMPOSE) exec web alembic revision --autogenerate -m "Add field to post descriptions"
 
 alembic_head:
 	$(DOCKER_COMPOSE) exec web alembic upgrade head

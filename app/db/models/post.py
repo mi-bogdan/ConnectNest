@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Mapping
-from sqlalchemy import String, DateTime, func, ForeignKey
+from sqlalchemy import String, DateTime, func, ForeignKey, Text
 from sqlalchemy.ext.associationproxy import association_proxy
 from app.db.base import Base
 import uuid
@@ -9,9 +9,6 @@ from sqlalchemy.dialects.postgresql import UUID
 
 
 from typing import List
-
-
-
 
 class Post(Base):
     """Посты"""
@@ -29,6 +26,10 @@ class Post(Base):
         String(255),
         nullable=False,
         comment="Заголовок"
+    )
+    description: Mapped[str] = mapped_column(
+        Text, nullable=True,
+        comment="Описание поста"
     )
     create_at: Mapped[datetime] = mapped_column(
         DateTime(),
